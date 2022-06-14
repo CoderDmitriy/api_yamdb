@@ -1,11 +1,9 @@
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import filters, permissions, viewsets
-
+from rest_framework.views import APIView
 from reviews.models import Review, Title, User
 
 from .permissions import IsAdminModeratorOwnerOrReadOnly, IsAdmin
