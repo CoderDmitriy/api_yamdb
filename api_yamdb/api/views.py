@@ -41,20 +41,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         review = get_object_or_404(Review, id=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
 
-from django.core.mail import send_mail
-
-from rest_framework.decorators import action
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import filters, permissions, viewsets
-
-from reviews.models import User
-
-from .serializer import UserSerializers, UserMeSerializers
-from . permissions import IsAdmin
-
-
+     
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializers
