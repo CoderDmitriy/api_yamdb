@@ -1,7 +1,4 @@
-from cgitb import text
-from tkinter import CASCADE
-from turtle import title
-from unicodedata import category
+
 from django.db import models
 
 class Category(models.Model):
