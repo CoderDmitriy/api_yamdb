@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from reviews.models import Review, Title, User
 
-from .permissions import IsAdmin, IsAdminModeratorOwnerOrReadOnly
+from .permissions import IsAdminModeratorOwnerOrReadOnly, IsAdmin
 from .serializers import (CommentSerializer, ReviewSerializer,
-                          UserMeSerializers, UserSerializers)
+                          UserSerializers, UserMeSerializers)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
