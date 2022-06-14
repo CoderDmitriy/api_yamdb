@@ -1,7 +1,9 @@
+
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from reviews.models import Comment, Review, Title, User
+from reviews.models import Comment, Review, Title, User, Category, Genre
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -62,3 +64,55 @@ class UserMeSerializers(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
         model = User
+
+
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        exclude = ('id',)
+        lookup_field = 'slug'
+
+class GenreSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = Genre
+        exclude = ('id',)
+        lookup_field = 'slug'
+
+
+class TitleSerializers(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', many=True, queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Category.objects.all()
+    )
+
+    class Meta:
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
+    
+
+class TitleReadSerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(
+        source='reviews__score__avg', read_only=True
+    )
+    genre = GenreSerializers(many=True)
+    category = CategorySerializer()
+
+    class Meta:
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
+
+    def validate_year(self, value):
+        if value > timezone.now().year:
+            raise ValidationError(
+            ('Год %(value)s больше текущего!'),
+        )
+        return value
+

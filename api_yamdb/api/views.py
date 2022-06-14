@@ -1,14 +1,15 @@
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from reviews.models import Review, Title, User
+from reviews.models import Review, Title, User, Category, Genre
 
-from .permissions import IsAdminModeratorOwnerOrReadOnly, IsAdmin
-from .serializers import (CommentSerializer, ReviewSerializer,
-                          UserSerializers, UserMeSerializers)
+from .permissions import IsAdminModeratorOwnerOrReadOnly, IsAdmin, IsAdminOrReadOnly
+from .serializers import (CommentSerializer, ReviewSerializer, TitleSerializers,  TitleReadSerializer,
+                          UserSerializers, UserMeSerializers, CategorySerializer, GenreSerializers)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -74,3 +75,32 @@ class APISignUp(APIView):
 class APIToken(APIView):
     def post(self, request):
         pass
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializers
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by("name")
+    serializer_class = TitleSerializers
+    permission_classes = (IsAdminOrReadOnly,)
+    # filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return TitleReadSerializer
+        return TitleSerializers
