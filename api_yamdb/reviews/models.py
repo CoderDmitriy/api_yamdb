@@ -8,6 +8,8 @@ ROLES = (
     ('moderator', 'Модератор')
 )
 
+LIMIT_SIMBOLS = 30
+
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -45,7 +47,7 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self) -> str:
-        return self.username
+        return self.username[:LIMIT_SIMBOLS]
 
 
 class Category(models.Model):
@@ -59,7 +61,7 @@ class Category(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.name[:LIMIT_SIMBOLS]
 
 
 class Genre(models.Model):
@@ -73,7 +75,7 @@ class Genre(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.name[:LIMIT_SIMBOLS]
 
 
 class Title(models.Model):
@@ -108,7 +110,7 @@ class Title(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.name[:LIMIT_SIMBOLS]
 
 
 class GenreTitle(models.Model):
@@ -124,7 +126,7 @@ class GenreTitle(models.Model):
     )
 
     def __str__(self):
-        return f'{self.title}, жанр - {self.genre}'
+        return f'{self.title}, жанр - {self.genre}'[:LIMIT_SIMBOLS]
 
 
 class Review(models.Model):
@@ -167,6 +169,9 @@ class Review(models.Model):
             ),
         ]
 
+    def __str__(self) -> str:
+        return self.title[:LIMIT_SIMBOLS]
+
 
 class Comment(models.Model):
     review = models.ForeignKey(
@@ -194,3 +199,6 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ['pub_date']
+
+    def __str__(self) -> str:
+        return self.review[:LIMIT_SIMBOLS]
