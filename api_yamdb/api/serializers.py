@@ -24,8 +24,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         title = get_object_or_404(Title, pk=title_id)
         if request.method == 'POST':
             if Review.objects.filter(title=title, author=author).exists():
-                raise ValidationError('Вы не можете добавить более'
-                                      'одного отзыва на произведение')
+                raise ValidationError(
+                    'Вы не можете добавить более'
+                    'одного отзыва на произведение'
+                )
         return data
 
     class Meta:
@@ -55,14 +57,33 @@ class UserSerializers(serializers.ModelSerializer):
         )
         model = User
 
+    def validate(self, data):
+        if 'role' in data and self.context['request'].user.role == 'user':
+            data['role'] = 'user'
+        return data
 
-class UserMeSerializers(serializers.ModelSerializer):
-    role = serializers.StringRelatedField(read_only=True)
 
+class UserSingUpSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-        )
+        fields = ('email', 'username')
+        model = User
+
+    def validate(self, data):
+        if data['username'] == 'me':
+            raise serializers.ValidationError(
+                'Нельзя создавать пользователя с username = "me".'
+            )
+        return data
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('username', 'confirmation_code')
+        extra_kwargs = {
+            'username': {
+                'validators': []
+            }
+        }
         model = User
 
 
