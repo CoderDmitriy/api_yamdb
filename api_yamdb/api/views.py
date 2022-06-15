@@ -91,8 +91,8 @@ class APISignUp(APIView):
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
         letters = string.ascii_lowercase
-        confirmation_code = ''.join(random.choice(letters) for i in range(
-            len(email))
+        confirmation_code = ''.join(
+            random.choice(letters) for i in range(len(email))
         )
         message = f'Ваш код подтверждения: {confirmation_code}'
         serializer.save(confirmation_code=confirmation_code)

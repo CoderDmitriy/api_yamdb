@@ -88,7 +88,6 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
         exclude = ('id',)
@@ -96,7 +95,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializers(serializers.ModelSerializer):
-
     class Meta:
         model = Genre
         exclude = ('id',)
