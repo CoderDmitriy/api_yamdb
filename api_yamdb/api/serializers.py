@@ -134,7 +134,6 @@ class TitleReadSerializer(serializers.ModelSerializer):
     def validate_year(self, value):
         if value > timezone.now().year:
             raise ValidationError(
-            ('Год %(value)s больше текущего!'),
-        )
+                ('Год %(value)s больше текущего!'),
+            )
         return value
-
