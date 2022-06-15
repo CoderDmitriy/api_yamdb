@@ -122,7 +122,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(
         source='reviews__score__avg', read_only=True
     )
-    genre = GenreSerializers
+    genre = GenreSerializers(many=True)
     category = CategorySerializer()
 
     class Meta:
