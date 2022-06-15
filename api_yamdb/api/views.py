@@ -6,7 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from reviews.models import Review, Title, User, Category, Genre
-
+from .filters import TitleFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsAdminModeratorOwnerOrReadOnly, IsAdmin, IsAdminOrReadOnly
 from .serializers import (CommentSerializer, ReviewSerializer, TitleSerializers,  TitleReadSerializer,
                           UserSerializers, UserMeSerializers, CategorySerializer, GenreSerializers)
@@ -94,11 +95,15 @@ class GenreViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
     lookup_field = 'slug'
 
+
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by("name")
+    queryset = Title.objects.all().annotate(
+        Avg("reviews__score")
+    ).order_by("name")
     serializer_class = TitleSerializers
     permission_classes = (IsAdminOrReadOnly,)
-    # filterset_class = TitleFilter
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):
