@@ -59,7 +59,7 @@ class UserSerializers(serializers.ModelSerializer):
 
     def validate(self, data):
         if 'role' in data and self.context['request'].user.role == 'user':
-            data['role'] = 'user'
+            data['role'] = self.context['request'].user.role
         return data
 
 
