@@ -2,17 +2,21 @@ import random
 import string
 
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from reviews.models import Review, Title, User, Category, Genre
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework_simplejwt.tokens import AccessToken
-from reviews.models import Review, Title, User
 
-from .permissions import IsAdmin, IsAdminModeratorOwnerOrReadOnly
+from .filters import TitleFilter
+from .permissions import IsAdmin, IsAdminModeratorOwnerOrReadOnly, IsAdminOrReadOnly
 from .serializers import (
-    CommentSerializer, ReviewSerializer, TokenSerializer, UserSerializers,
+    CategorySerializer, CommentSerializer, GenreSerializers, ReviewSerializer, 
+    TitleSerializers,  TitleReadSerializer, TokenSerializer, UserSerializers,
     UserSingUpSerializer
 )
 
@@ -116,3 +120,36 @@ class APIToken(APIView):
             {'confirmation_code': 'Неверный код подтверждения'},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+      
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializers
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all().annotate(
+        Avg("reviews__score")
+    ).order_by("name")
+    serializer_class = TitleSerializers
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return TitleReadSerializer
+        return TitleSerializers
