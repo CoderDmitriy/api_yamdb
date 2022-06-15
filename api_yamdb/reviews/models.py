@@ -13,33 +13,22 @@ LIMIT_SIMBOLS = 30
 
 class User(AbstractUser):
     email = models.EmailField(
-        'Почта',
-        max_length=254,
-        unique=True
+        'Почта', max_length=254, unique=True
     )
     first_name = models.CharField(
-        'Имя',
-        max_length=150,
-        blank=True
+        'Имя', max_length=150, blank=True
     )
     last_name = models.CharField(
-        'Фамилия',
-        max_length=150,
-        blank=True
+        'Фамилия', max_length=150, blank=True
     )
     bio = models.TextField(
-        'Биография',
-        blank=True,
-        null=True
+        'Биография', blank=True, null=True
     )
     role = models.CharField(
-        verbose_name='Роль',
-        max_length=50, choices=ROLES,
-        default='user'
+        'Роль', max_length=50, choices=ROLES, default='user'
     )
     confirmation_code = models.CharField(
-        'Код подтвержения', max_length=100,
-        blank=True
+        'Код подтвержения', max_length=100, blank=True
     )
 
     class Meta:
@@ -52,12 +41,10 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(
-        max_length=256,
-        verbose_name='Название'
+        'Название', max_length=256
     )
     slug = models.SlugField(
-        max_length=50,
-        unique=True
+        'Слаг', max_length=50, unique=True
     )
 
     def __str__(self):
@@ -66,12 +53,10 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(
-        max_length=256,
-        verbose_name='Название'
+        'Название', max_length=256
     )
     slug = models.SlugField(
-        max_length=50,
-        unique=True
+        'Слаг', max_length=50, unique=True
     )
 
     def __str__(self):
@@ -80,21 +65,16 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        max_length=256,
-        verbose_name='Название'
+        'Название', max_length=256
     )
     year = models.IntegerField(
-        verbose_name='Год выпуска'
+        'Год выпуска'
     )
     description = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name='Описание'
+        'Описание', blank=True, null=True
     )
     genre = models.ManyToManyField(
-        Genre,
-        through='GenreTitle',
-        verbose_name='Жанр'
+        Genre, through='GenreTitle', verbose_name='Жанр'
     )
     category = models.ForeignKey(
         Category,
@@ -104,9 +84,7 @@ class Title(models.Model):
         verbose_name='Категория'
     )
     rating = models.IntegerField(
-        null=True,
-        default=None,
-        verbose_name='Рейтинг'
+        null=True, default=None, verbose_name='Рейтинг'
     )
 
     def __str__(self):
@@ -115,14 +93,10 @@ class Title(models.Model):
 
 class GenreTitle(models.Model):
     title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name='Произведение'
+        Title, on_delete=models.CASCADE, verbose_name='Произведение'
     )
     genre = models.ForeignKey(
-        Genre,
-        on_delete=models.CASCADE,
-        verbose_name='Жанр'
+        Genre, on_delete=models.CASCADE, verbose_name='Жанр'
     )
 
     def __str__(self):
@@ -137,7 +111,7 @@ class Review(models.Model):
         related_name='reviews'
     )
     text = models.TextField(
-        verbose_name='Текст',
+        'Текст',
     )
     author = models.ForeignKey(
         User,
@@ -153,9 +127,7 @@ class Review(models.Model):
         ]
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
-        auto_now_add=True,
-        db_index=True
+        'Дата публикации', auto_now_add=True, db_index=True
     )
 
     class Meta:
@@ -181,7 +153,7 @@ class Comment(models.Model):
         related_name='comments'
     )
     text = models.TextField(
-        verbose_name='Текст',
+        'Текст',
     )
     author = models.ForeignKey(
         User,
@@ -190,9 +162,7 @@ class Comment(models.Model):
         related_name='comments'
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
-        auto_now_add=True,
-        db_index=True
+        'Дата публикации', auto_now_add=True, db_index=True
     )
 
     class Meta:
