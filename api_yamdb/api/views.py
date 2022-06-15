@@ -14,6 +14,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
 from .filters import TitleFilter
+from .mixins import ListCreateDestroyViewSet
 from .permissions import (
     IsAdmin, IsAdminModeratorOwnerOrReadOnly, IsAdminOrReadOnly
 )
@@ -125,7 +126,7 @@ class APIToken(APIView):
         )
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -134,7 +135,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializers
     permission_classes = (IsAdminOrReadOnly,)
