@@ -1,9 +1,9 @@
-
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from reviews.models import ROLES, Category, Comment, Genre, Review, Title, User
+
+from reviews.models import Category, Comment, Genre, ROLES, Review, Title, User
 
 ME = 'me'
 
@@ -54,10 +54,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class UserSerializers(serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
-        model = User
 
     def validate(self, data):
         if 'role' in data and self.context['request'].user.role == ROLES[0][0]:
@@ -127,9 +127,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
-        )
+        fields = ('__all__')
 
     def validate_year(self, value):
         if value > timezone.now().year:
