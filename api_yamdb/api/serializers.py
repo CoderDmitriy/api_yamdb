@@ -19,6 +19,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    class Meta:
+        model = Review
+        fields = '__all__'
+
     def validate(self, data):
         request = self.context['request']
         author = request.user
@@ -31,10 +35,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                     'одного отзыва на произведение'
                 )
         return data
-
-    class Meta:
-        model = Review
-        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -67,8 +67,8 @@ class UserSerializers(serializers.ModelSerializer):
 
 class UserSingUpSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('email', 'username')
         model = User
+        fields = ('email', 'username')
 
     def validate(self, data):
         if data['username'] == ME:
@@ -80,13 +80,13 @@ class UserSingUpSerializer(serializers.ModelSerializer):
 
 class TokenSerializer(serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = ('username', 'confirmation_code')
         extra_kwargs = {
             'username': {
                 'validators': []
             }
         }
-        model = User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -113,9 +113,7 @@ class TitleSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
-        )
+        exclude = ('rating',)
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
