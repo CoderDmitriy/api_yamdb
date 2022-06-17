@@ -90,18 +90,9 @@ class APISignUp(APIView):
         serializer = UserSingUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
-        username = serializer.validated_data['username']
-        try:
-            user, created = User.objects.get_or_create(
-                email=email, username=username
-            )
-        except Exception:
-            return Response(
-                'Пользователь с этими username или email уже зарегистрирован.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        user = serializer.save()
         confirmation_code = default_token_generator.make_token(user)
-        print(confirmation_code)
+        user = serializer.save(confirmation_code=confirmation_code)
         message = f'Ваш код подтверждения: {confirmation_code}'
         send_mail(
             MAIL_SUBJECT,

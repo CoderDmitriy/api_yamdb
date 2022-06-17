@@ -75,7 +75,8 @@ python manage.py runserver
 --data-raw '{
     "email": "irina@yandex.ru",
     "username": "me"
-}```
+}
+```
 
 {
     "username": [
