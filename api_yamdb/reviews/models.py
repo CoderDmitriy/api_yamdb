@@ -47,6 +47,10 @@ class Category(models.Model):
         'Слаг', max_length=50, unique=True
     )
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
     def __str__(self):
         return self.name[:LIMIT_SIMBOLS]
 
@@ -58,6 +62,10 @@ class Genre(models.Model):
     slug = models.SlugField(
         'Слаг', max_length=50, unique=True
     )
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
     def __str__(self):
         return self.name[:LIMIT_SIMBOLS]
@@ -87,6 +95,10 @@ class Title(models.Model):
         null=True, default=None, verbose_name='Рейтинг'
     )
 
+    class Meta:
+        verbose_name = 'Произедение'
+        verbose_name_plural = 'Произведения'
+
     def __str__(self):
         return self.name[:LIMIT_SIMBOLS]
 
@@ -98,6 +110,10 @@ class GenreTitle(models.Model):
     genre = models.ForeignKey(
         Genre, on_delete=models.CASCADE, verbose_name='Жанр'
     )
+
+    class Meta:
+        verbose_name = 'Жанр произведения'
+        verbose_name_plural = 'Жанры произведений'
 
     def __str__(self):
         return f'{self.title}, жанр - {self.genre}'[:LIMIT_SIMBOLS]

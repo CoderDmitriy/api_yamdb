@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
+from rest_framework.validators import UniqueValidator
 
 from reviews.models import Category, Comment, Genre, ROLES, Review, Title, User
 
@@ -19,6 +20,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    class Meta:
+        model = Review
+        fields = '__all__'
+
     def validate(self, data):
         request = self.context['request']
         author = request.user
@@ -31,10 +36,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                     'одного отзыва на произведение'
                 )
         return data
-
-    class Meta:
-        model = Review
-        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -66,27 +67,31 @@ class UserSerializers(serializers.ModelSerializer):
 
 
 class UserSingUpSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('email', 'username')
-        model = User
+    username = serializers.CharField(max_length=150, validators=[
+        UniqueValidator(queryset=User.objects.all())
+    ])
 
-    def validate(self, data):
-        if data['username'] == ME:
+    class Meta:
+        model = User
+        fields = ('email', 'username')
+
+    def validate_username(self, value):
+        if value == ME:
             raise serializers.ValidationError(
-                'Нельзя создавать пользователя с username = "me".'
+                'Нельзя создавать пользователя с username "me".'
             )
-        return data
+        return value
 
 
 class TokenSerializer(serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = ('username', 'confirmation_code')
         extra_kwargs = {
             'username': {
                 'validators': []
             }
         }
-        model = User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -113,9 +118,7 @@ class TitleSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
-        )
+        exclude = ('rating',)
 
 
 class TitleReadSerializer(serializers.ModelSerializer):

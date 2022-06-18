@@ -50,3 +50,51 @@ python manage.py runserver
 
 # Проект в разработке
 Нужно доработать отправку кода при регистрации на e-amil и подключить проект к Postgres.
+
+# Примеры запросов api
+
+Регистрация пользователя
+
+```curl --location --request POST 'http://127.0.0.1:8000/api/v1/auth/signup/' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "irina@yandex.ru",
+    "username": "irina"
+}
+```
+
+{
+    "email": "irina@yandex.ru",
+    "username": "irina"
+}
+
+Регистарция пользователя с username=me
+
+```curl --location --request POST 'http://127.0.0.1:8000/api/v1/auth/signup/' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "irina@yandex.ru",
+    "username": "me"
+}
+```
+
+{
+    "username": [
+        "Нельзя создавать пользователя с username \"me\"."
+    ]
+}
+
+Список произведений:
+```
+http://127.0.0.1:8000/api/v1/titles/
+```
+
+Пример запроса, отзывы на произведение:
+```
+http://127.0.0.1:8000/api/v1/titles/5/reviews/
+```
+
+Пример запроса, коментарии к отзывам:
+```
+http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/
+```
