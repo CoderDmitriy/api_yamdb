@@ -2,11 +2,8 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from rest_framework.validators import UniqueValidator
 
 from reviews.models import Category, Comment, Genre, ROLES, Review, Title, User
-
-ME = 'me'
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -67,18 +64,25 @@ class UserSerializers(serializers.ModelSerializer):
 
 
 class UserSingUpSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=150, validators=[
-        UniqueValidator(queryset=User.objects.all())
-    ])
-
     class Meta:
         model = User
         fields = ('email', 'username')
 
     def validate_username(self, value):
-        if value == ME:
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(
+                'Пользователь с таким username уже зарегистрирован.'
+            )
+        if value == 'me':
             raise serializers.ValidationError(
                 'Нельзя создавать пользователя с username "me".'
+            )
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                'Пользователь с таким email уже зарегистрирован.'
             )
         return value
 
